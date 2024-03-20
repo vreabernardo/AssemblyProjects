@@ -1,0 +1,19 @@
+OTP ENCRYPTION
+    plaintext ^ key (same lenght as plaintext) = ciphertext 
+
+    key = random number given a seed
+
+
+C program
+
+encript(inputfile, outputfile, seed) -> writes the encripted data to the outputfile using OTP
+
+Bash program
+
+encript(directory, seed) -> encripts all files in a dir using the encript program
+
+seed = something + filename
+
+
+
+

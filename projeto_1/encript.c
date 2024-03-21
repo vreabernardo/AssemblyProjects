@@ -5,9 +5,9 @@
 #define ERROR_MESSAGE "Encryption of %s failed.\n"
 #define SUCCESS_MESSAGE "Encryption of %s succeeded.\n"
 
-void encrypt_file(const char *input_file, const char *output_file, int seed);
+void encrypt_file(const char *input_file, const char *output_file, const char *key);
 void generate_key(char *key, int length);
-long get_file_length(FILE *file);
+long get_file_length(const char *input_file);
 void dencrypt_file(const char *input_file, const char *key);
 
 int main(int argc, char *argv[])
@@ -18,26 +18,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    encrypt_file(argv[1], argv[2], atoi(argv[3])); // this is wrong; aba=baa. use *(idx+1)
-    return 0;
-}
-
-void encrypt_file(const char *input_file, const char *output_file, int seed)
-{
-    FILE *source_file = fopen(input_file, "r");
-    if (source_file == NULL)
-    {
-        fprintf(stderr, ERROR_MESSAGE, input_file);
-        return;
-    }
-    FILE *destination_file = fopen(output_file, "w");
-    if (destination_file == NULL)
-    {
-        fprintf(stderr, ERROR_MESSAGE, input_file);
-        return;
-    }
-
-    long length = get_file_length(source_file);
+    int seed = atoi(argv[3]);
+    long length = get_file_length(argv[1]);
     // printf("Length of the file: %ld bytes\n", length);
 
     char key[length + 1];
@@ -46,47 +28,59 @@ void encrypt_file(const char *input_file, const char *output_file, int seed)
 
     printf("Key: %s\n", key);
 
-    int character;
-    int character2;
+    encrypt_file(argv[1], argv[2], key); // this is wrong; aba=baa. use *(idx+1)
+    dencrypt_file(argv[2], key);
+    return 0;
+}
 
+void encrypt_file(const char *input_file, const char *output_file, const char *key)
+{
+    FILE *source_file = fopen(input_file, "r");
+    if (source_file == NULL)
+    {
+        fprintf(stderr, ERROR_MESSAGE, input_file);
+        return;
+    }
+
+    FILE *destination_file = fopen(output_file, "w");
+    if (destination_file == NULL)
+    {
+        fprintf(stderr, ERROR_MESSAGE, output_file);
+        fclose(source_file); // Close the source file before returning
+        return;
+    }
+
+    int character;
+    int key_char;
     int position = 0;
 
-    while (1)
+    while ((character = fgetc(source_file)) != EOF && key[position] != '\0')
     {
-        character = fgetc(source_file);
-        character2 = key[position];
-
-        if (character == EOF || character2 == '\0')
-        {
-            if (character == EOF && character2 == '\0')
-            {
-                fprintf(stderr, SUCCESS_MESSAGE, input_file);
-            }
-            else
-            {
-                fprintf(stderr, ERROR_MESSAGE, input_file);
-            }
-            break;
-        }
-        else
-        {
-            fputc(character ^ character2, destination_file);
-        }
-
+        key_char = key[position];
+        fputc(character ^ key_char, destination_file);
         position++;
+    }
+
+    // Check if both files reached EOF or end of key
+    if (character == EOF && key[position] == '\0')
+    {
+        fprintf(stderr, SUCCESS_MESSAGE, input_file);
+    }
+    else
+    {
+        fprintf(stderr, ERROR_MESSAGE, input_file);
     }
 
     fclose(source_file);
     fclose(destination_file);
-
-    dencrypt_file(output_file, key);
 }
 
-long get_file_length(FILE *file)
+long get_file_length(const char *input_file)
 {
-    fseek(file, 0, SEEK_END);
-    long length = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    FILE *source_file = fopen(input_file, "r");
+    fseek(source_file, 0, SEEK_END);
+    long length = ftell(source_file);
+    fseek(source_file, 0, SEEK_SET);
     return length;
 }
 
@@ -101,41 +95,18 @@ void generate_key(char *key, int length)
 
 void dencrypt_file(const char *input_file, const char *key)
 {
+    printf("\nFile decrypted\nData:\n");
+
     FILE *source_file = fopen(input_file, "r");
-    if (source_file == NULL)
-    {
-        fprintf(stderr, ERROR_MESSAGE, input_file);
-        return;
-    }
 
     int character;
     int key_char;
-
     int position = 0;
 
-    while (1)
+    while ((character = fgetc(source_file)) != EOF && key[position] != '\0')
     {
-        character = fgetc(source_file);
         key_char = key[position];
-
-        if (character == EOF || key_char == '\0')
-        {
-            if (character == EOF && key_char == '\0')
-            {
-                printf("\n");
-                fprintf(stderr, SUCCESS_MESSAGE, input_file);
-            }
-            else
-            {
-                fprintf(stderr, ERROR_MESSAGE, input_file);
-            }
-            break;
-        }
-        else
-        {
-            printf("%c", character ^ key_char);
-        }
-
+        printf("%c", character ^ key_char);
         position++;
     }
 

@@ -6,7 +6,7 @@
 #define SUCCESS_MESSAGE "Encryption of %s succeeded.\n"
 
 void encrypt_file(const char *input_file, const char *output_file, const char *key);
-void generate_key(char *key, int length);
+void generate_key(char *key, int length, int seed);
 long get_file_length(const char *input_file);
 void dencrypt_file(const char *input_file, const char *key);
 
@@ -18,17 +18,16 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    int seed = atoi(argv[3]);
+    int seed = atoi(argv[3]); // this is wrong; aba=baa. use *(idx+1)
     long length = get_file_length(argv[1]);
     // printf("Length of the file: %ld bytes\n", length);
 
     char key[length + 1];
-    srand(seed);
-    generate_key(key, length);
+    generate_key(key, length, seed);
 
     printf("Key: %s\n", key);
 
-    encrypt_file(argv[1], argv[2], key); // this is wrong; aba=baa. use *(idx+1)
+    encrypt_file(argv[1], argv[2], key);
     dencrypt_file(argv[2], key);
     return 0;
 }
@@ -46,7 +45,6 @@ void encrypt_file(const char *input_file, const char *output_file, const char *k
     if (destination_file == NULL)
     {
         fprintf(stderr, ERROR_MESSAGE, output_file);
-        fclose(source_file); // Close the source file before returning
         return;
     }
 
@@ -61,7 +59,6 @@ void encrypt_file(const char *input_file, const char *output_file, const char *k
         position++;
     }
 
-    // Check if both files reached EOF or end of key
     if (character == EOF && key[position] == '\0')
     {
         fprintf(stderr, SUCCESS_MESSAGE, input_file);
@@ -84,8 +81,9 @@ long get_file_length(const char *input_file)
     return length;
 }
 
-void generate_key(char *key, int length)
+void generate_key(char *key, int length, int seed)
 {
+    srand(seed);
     for (int i = 0; i < length; i++)
     {
         key[i] = rand();

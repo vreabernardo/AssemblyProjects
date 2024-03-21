@@ -13,7 +13,3 @@ Bash program
 encript(directory, seed) -> encripts all files in a dir using the encript program
 
 seed = something + filename
-
-
-
-

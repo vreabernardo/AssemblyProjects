@@ -1,20 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
 
-#define ERROR_MESSAGE_FORMAT "Encryption of %s failed.\n"
+#define ERROR_MESSAGE "Encryption of %s failed.\n"
+#define SUCCESS_MESSAGE "Encryption of %s succeeded.\n"
 
 void encrypt_file(const char *input_file, const char *output_file, int seed);
-void generateKey(char *key, int length);
+void generate_key(char *key, int length);
+long get_file_length(FILE *file);
 
 int main(int argc, char *argv[])
 {
     if (argc != 4)
     {
-        char error_message[100];
-        snprintf(error_message, sizeof(error_message), ERROR_MESSAGE_FORMAT, argv[1]);
-        printf("%s", error_message);
+        fprintf(stderr, "Usage: %s <input_file> <output_file> <seed>\n", argv[0]);
         return 1;
     }
 
@@ -24,17 +23,40 @@ int main(int argc, char *argv[])
 
 void encrypt_file(const char *input_file, const char *output_file, int seed)
 {
+    FILE *source_file = fopen(input_file, "r");
+    if (source_file == NULL)
+    {
+        fprintf(stderr, ERROR_MESSAGE, input_file);
+        return;
+    }
+    FILE *destination_file = fopen(output_file, "w");
+    if (destination_file == NULL)
+    {
+        fprintf(stderr, ERROR_MESSAGE, input_file);
+        return;
+    }
+
+    long length = get_file_length(source_file);
+    // printf("Length of the file: %ld bytes\n", length);
+
+    char key[length + 1];
     srand(seed);
+    generate_key(key, length);
 
-    int input_length = strlen(input_file);
-    char key[input_length + 1];
+    printf("Key: %s\n", key);
 
-    generateKey(key, input_length);
-
-    // printf("Key: %s\n", key);
+    fclose(source_file);
 }
 
-void generateKey(char *key, int length)
+long get_file_length(FILE *file)
+{
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    fseek(file, 0, SEEK_SET);
+    return length;
+}
+
+void generate_key(char *key, int length)
 {
     for (int i = 0; i < length; i++)
     {

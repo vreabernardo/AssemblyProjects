@@ -1,19 +1,26 @@
-#!/usr/bin/bash
+#!/bin/bash
 
-
-dir=$1
+# Check if the number of input arguments is correct
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <directory> <seed>"
+    exit 1
+fi
+# Assign the input arguments to variables
+directory=$1
 seed=$2
 
-#opens directory in input;
-cd $dir
+# Find all files in the input directory and its subdirectories
+files=$(find "$directory" -type f)
 
-#for each file in the directory creates a new seed, concatenating the filename to the seed (seed_file)
-#creates a dedicated output file, file.encripted
-#executes the encription .c file 
-for file in $dir/*
-do
-  seed_file = $seed${file##*/}
-  gcc -o $encript.c $file ${file##*/}.encripted $seed_file
-
+# Iterate over each file found
+for file in $files; do
+  # Skip encrypted files using the wildcard
+    if [[ "$file" == *.encrypted ]]; then
+        continue  
+    fi
+    # Call the C program with the specified arguments
+    original_name=$(basename "$file")
+    dir_name=$(dirname "$file")
+    output_name="${dir_name}/${original_name}.encrypted"
+    ./encript "$file" "$output_name" "$seed"
 done
-

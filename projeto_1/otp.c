@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 
     encrypt_file(argv[1], argv[2], key);
     // dencrypt_file(argv[2], key); // check if the file is encrypted correctly
-
     return 0;
 }
 

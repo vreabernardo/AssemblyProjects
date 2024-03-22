@@ -25,5 +25,5 @@ for file in $files; do
     output_name="${dir_name}/${original_name}.encrypted"
     new_seed="${seed}${original_name}"
     
-    ./encript "$file" "$output_name" "$new_seed"
+    ./otp "$file" "$output_name" "$new_seed"
 done

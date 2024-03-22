@@ -9,44 +9,40 @@ void encrypt_file(const char *input_file, const char *output_file, const char *k
 void generate_key(char *key, int length, int seed);
 long get_file_length(const char *input_file);
 void dencrypt_file(const char *input_file, const char *key);
+int generateSeed(char *baseSeed);
 
 int main(int argc, char *argv[])
 {
     if (argc != 4)
     {
         fprintf(stderr, "Usage: %s <input_file> <output_file> <seed>\n", argv[0]);
-        return 1;
+        return 0;
     }
 
-    int seed = atoi(argv[3]); // this is wrong; aba=baa. use *(idx+1)
+    int seed = generateSeed(argv[3]);
+
     long length = get_file_length(argv[1]);
-    // printf("Length of the file: %ld bytes\n", length);
+
+    if (length == 0)
+    {
+        fprintf(stderr, ERROR_MESSAGE, argv[1]);
+        // printf("File is empty\n");
+        return 0;
+    }
 
     char key[length + 1];
     generate_key(key, length, seed);
 
-    printf("Key: %s\n", key);
-
     encrypt_file(argv[1], argv[2], key);
-    dencrypt_file(argv[2], key);
+    // dencrypt_file(argv[2], key); // check if the file is encrypted correctly
+
     return 0;
 }
 
 void encrypt_file(const char *input_file, const char *output_file, const char *key)
 {
     FILE *source_file = fopen(input_file, "r");
-    if (source_file == NULL)
-    {
-        fprintf(stderr, ERROR_MESSAGE, input_file);
-        return;
-    }
-
     FILE *destination_file = fopen(output_file, "w");
-    if (destination_file == NULL)
-    {
-        fprintf(stderr, ERROR_MESSAGE, output_file);
-        return;
-    }
 
     int character;
     int key_char;
@@ -66,21 +62,12 @@ void encrypt_file(const char *input_file, const char *output_file, const char *k
     else
     {
         fprintf(stderr, ERROR_MESSAGE, input_file);
+        // printf("Key is not the same size as the File\n");
     }
 
     fclose(source_file);
     fclose(destination_file);
 }
-
-long get_file_length(const char *input_file)
-{
-    FILE *source_file = fopen(input_file, "r");
-    fseek(source_file, 0, SEEK_END);
-    long length = ftell(source_file);
-    fseek(source_file, 0, SEEK_SET);
-    return length;
-}
-
 void generate_key(char *key, int length, int seed)
 {
     srand(seed);
@@ -89,6 +76,30 @@ void generate_key(char *key, int length, int seed)
         key[i] = rand();
     }
     key[length] = '\0';
+}
+
+int generateSeed(char *baseSeed)
+{
+    int seed = 0;
+
+    // baseSeed = seed number + filename -> aba=aab -> fix: [(idx+1)*a for a in argv[3]]
+    for (int i = 0; baseSeed[i] != '\0'; i++)
+    {
+        seed += (baseSeed[i] * (i + 1));
+    }
+    // printf("Seed: %d\n", seed);
+    return seed;
+}
+
+long get_file_length(const char *input_file)
+{
+    FILE *source_file = fopen(input_file, "r");
+    fseek(source_file, 0, SEEK_END);  // go to end of file
+    long length = ftell(source_file); // get current position on the file
+    fclose(source_file);
+
+    // printf("Length of the file: %ld bytes\n", length);
+    return length;
 }
 
 void dencrypt_file(const char *input_file, const char *key)

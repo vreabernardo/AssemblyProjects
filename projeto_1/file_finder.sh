@@ -18,9 +18,12 @@ for file in $files; do
     if [[ "$file" == *.encrypted ]]; then
         continue  
     fi
+    
     # Call the C program with the specified arguments
     original_name=$(basename "$file")
     dir_name=$(dirname "$file")
     output_name="${dir_name}/${original_name}.encrypted"
-    ./encript "$file" "$output_name" "$seed"
+    new_seed="${seed}${original_name}"
+    
+    ./encript "$file" "$output_name" "$new_seed"
 done

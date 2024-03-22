@@ -104,7 +104,7 @@ long get_file_length(const char *input_file)
 
 void dencrypt_file(const char *input_file, const char *key)
 {
-    printf("\nFile decrypted\nData:\n");
+    printf("File decrypted\nData:\n");
 
     FILE *source_file = fopen(input_file, "r");
 
@@ -118,6 +118,6 @@ void dencrypt_file(const char *input_file, const char *key)
         printf("%c", character ^ key_char);
         position++;
     }
-
+    printf("\n");
     fclose(source_file);
 }

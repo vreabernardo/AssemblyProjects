@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    char key[length + 1];
+    char *key = (char *)malloc(length + 1);
     generate_key(key, length, seed);
 
     encrypt_file(argv[1], argv[2], key);

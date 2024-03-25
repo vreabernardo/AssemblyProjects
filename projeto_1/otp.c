@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
 
     // Variable to check if the source file is empty
     int is_empty = 1;
+    int encryption_error = 0;
 
     // Variable to store each character read from the source file
     char character;
@@ -28,13 +29,21 @@ int main(int argc, char *argv[])
         // Generate a random number, XOR it with the character read from the source file and write the result to the destination file
         int random = rand();
         fputc(character ^ random, destination_file);
-        // printf("%c", character ^ random ^ random); // Test
+
+        // Check for encryption errors by decrypting the last character by xoring it with the same key and comparing it with the original.
+        if ((character ^ random ^ random) != character)
+        {
+            // If the result is not the original character, set encryption_error flag and break out of the loop
+            encryption_error = 1;
+            break;
+        }
     }
 
     // If the is_empty flag is set, the source file is empty and the encryption cant be done
-    if (is_empty)
+    if (is_empty || encryption_error)
         printf(ERROR_MESSAGE, argv[1]);
     else
+
         printf(SUCCESS_MESSAGE, argv[1]);
 
     // Close the source and destination files

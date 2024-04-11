@@ -38,6 +38,7 @@ void dorun()
         opcode = (unsigned char)(ir >> 12); // DECODE
         opALU = (unsigned char)((ir & 0x0f00) >> 8);
         addressOrValue = ir & 0x00ff;
+
         printf("PC=%d IR=%04X opcode=%02X opALU=%02X addressOrValue=%02X\n", pc, ir, opcode, opALU, addressOrValue);
 
         switch (opcode)
@@ -50,23 +51,28 @@ void dorun()
             break;
 
         case 0x01: /* ADDI / SUBI */
-
+            opALU == 0x00 ? addi() : subi();
             break;
 
         case 0x02: /* ADD, SUB */
-
+            opALU == 0x00 ? add() : sub();
             break;
 
         case 0x03: /* CLAC */
-
+            // Accumulator <- 0; set the flag ZERO to 1
+            ac = 0;
+            flagZero = 1;
             break;
 
         case 0x04: /* STORE */
-
+            // MemoryData[eeeeeeee] = Accumulator
+            Mem[addressOrValue] = ac;
             break;
 
         case 0x05: /* BEQZ */
-
+            // if (Acumuldor == 0) PC <- eeeeeeee
+            if (ac == 0)
+                pc = addressOrValue;
             break;
 
         default:
@@ -74,4 +80,20 @@ void dorun()
             return;
         }
     }
+}
+void addi()
+{
+    printf("ADDI\n");
+}
+void subi()
+{
+    printf("SUBI\n");
+}
+void add()
+{
+    printf("ADD\n");
+}
+void sub()
+{
+    printf("SUB\n");
 }

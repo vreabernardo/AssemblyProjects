@@ -51,10 +51,14 @@ void dorun()
             break;
 
         case 0x01: /* ADDI / SUBI */
+            // Accumulator <- Accumulator + vvvvvvvv
+            // Accumulator <- Accumulator - vvvvvvvv
             opALU == 0x00 ? addi() : subi();
             break;
 
         case 0x02: /* ADD, SUB */
+            // Accumulator <- Accumulator + MemoryData[eeeeeeee]
+            // Accumulator <- Accumulator - MemoryData[eeeeeeee]
             opALU == 0x00 ? add() : sub();
             break;
 
@@ -79,21 +83,40 @@ void dorun()
             printf("Invalid instruction!\n");
             return;
         }
+        pc++; // NEXT
     }
 }
 void addi()
 {
-    printf("ADDI\n");
+    // Accumulator <- Accumulator + vvvvvvvv
+    ac += (char) addressOrValue;
+    
+    flagOverflow = (ac > 0 && addressOrValue > 0 && ac + addressOrValue < 0) 
+    ||(ac < 0 && addressOrValue < 0 && ac + addressOrValue > 0);
+
+    flagZero = ac == 0;
+
+    flagCarry = ac < 0;
+
 }
 void subi()
 {
-    printf("SUBI\n");
+    ac += (char) addressOrValue;
+    printf("SUBI\n"); 
+
+
 }
 void add()
 {
-    printf("ADD\n");
+    // Accumulator <- Accumulator + MemoryData[eeeeeeee]
+    ac += Mem[addressOrValue];
 }
 void sub()
 {
-    printf("SUB\n");
+    // Accumulator <- Accumulator - MemoryData[eeeeeeee]
+    ac -= Mem[addressOrValue];
 }
+
+// unsigned carry indicates overflow
+
+// signed overflow ++ = - and -- = +

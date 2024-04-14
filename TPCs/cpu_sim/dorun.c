@@ -28,8 +28,8 @@ void updateFlags(char result, char a, char b, char isAddition)
 
 void dorun()
 {
-    unsigned short int pc; // program counter or instruction pointer
-    unsigned short int ir; // instruction register
+    unsigned short int pc;
+    unsigned short int ir; 
 
     unsigned char opcode;
     unsigned char opALU;

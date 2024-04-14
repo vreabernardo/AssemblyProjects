@@ -14,7 +14,7 @@ char old_ac;
 
 void updateFlagsADD(char result, char a, char b)
 {
-    flagZero = result == 0;
+    flagZero = result == 0x00;
 
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 
@@ -30,7 +30,7 @@ void updateFlagsADD(char result, char a, char b)
 
 void updateFlagsSUB(char result, char a, char b)
 {
-    flagZero = result == 0;
+    flagZero = result == 0x00;
 
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 

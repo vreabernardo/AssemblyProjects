@@ -25,7 +25,6 @@ void updateFlagsADD(char result, char a, char b)
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
     */
 
-    // source: https://stackoverflow.com/a/55469349
     flagOverflow = (b > 0 && a > MAX - b) || (b < 0 && a < MIN - b);
 }
 
@@ -42,7 +41,6 @@ void updateFlagsSUB(char result, char a, char b)
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
     */
 
-    // source: https://stackoverflow.com/a/70503136
     flagOverflow = (b > 0 && a < MIN + b) || (b < 0 && a > MAX + b);
 }
 

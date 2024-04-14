@@ -19,7 +19,7 @@ void updateFlagsADD(char result, char a, char b)
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 
     // when the inputs have opposite signs, and the output has a different sign from the first operand.
-    // *Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation*
+    // * Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation *
     /* flagOverflow = ((!(a & MSB_MASK) & !((char)b & MSB_MASK) & (result & MSB_MASK)) || // +a + b = -c
                     ((a & MSB_MASK) & ((char)b & MSB_MASK) & !(result & MSB_MASK)))       // -a - b = +c
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
@@ -35,7 +35,7 @@ void updateFlagsSUB(char result, char a, char b)
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 
     // when the inputs have opposite signs, and the output has a different sign from the first operand.
-    // *Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation*
+    // * Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation *
     /* flagOverflow = ((!(a & MSB_MASK) & ((char)b & MSB_MASK) & (result & MSB_MASK)) || // +a - b = -c
                     ((a & MSB_MASK) & !(char)b & MSB_MASK & !(result & MSB_MASK)))       // -a + b = +c
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
@@ -95,12 +95,12 @@ void dorun()
             old_ac = ac;
             if (opALU == 0x00)
             { // ADD
-                ac += Mem[addressOrValue];
+                ac += (char)Mem[addressOrValue];
                 updateFlagsADD(ac, old_ac, Mem[addressOrValue]);
             }
             else if (opALU == 0x01)
             { // SUB
-                ac -= Mem[addressOrValue];
+                ac -= (char)Mem[addressOrValue];
                 updateFlagsSUB(ac, old_ac, Mem[addressOrValue]);
             }
             break;
@@ -115,7 +115,7 @@ void dorun()
             break;
 
         case 0x05: // BEQZ
-            if (ac == 0)
+            if (ac == 0x00)
             {
                 pc = addressOrValue;
             }

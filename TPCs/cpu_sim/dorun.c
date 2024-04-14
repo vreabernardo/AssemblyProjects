@@ -10,11 +10,32 @@ extern unsigned char flagOverflow;
 #define MAX +127
 #define MIN -128
 #define UNSIGNED_MAX 255
+
+
 void updateFlags(char result, char a, char b, char isAddition)
 {
     flagZero = (result == 0x00);
 
-    flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;
+    
+    int MSB_a = 0;
+    int MSB_res = 0;
+    //determines the most significant bit of result and old_ac;
+    //if MSB_res is diferent then there was a carry;
+    while (MSB_a != MSB_res) {
+        if (result != 0) {
+            result >>= 1;
+            MSB_res ++;
+        }
+
+        if(a != 0) {
+            a >>= 1;
+            MSB_a ++;
+        }
+    }
+    
+    flagCarry = MSB_res > MSB_a;
+    
+    //flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;
 
     if (isAddition)
     {
@@ -24,6 +45,7 @@ void updateFlags(char result, char a, char b, char isAddition)
     {
         flagOverflow = (b < 0 && a > MAX + b) || (b > 0 && a < MIN + b);
     }
+
 }
 
 void dorun()

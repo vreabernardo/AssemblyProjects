@@ -29,7 +29,7 @@ void updateFlags(char result, char a, char b, char isAddition)
 void dorun()
 {
     unsigned short int pc;
-    unsigned short int ir; 
+    unsigned short int ir;
 
     unsigned char opcode;
     unsigned char opALU;

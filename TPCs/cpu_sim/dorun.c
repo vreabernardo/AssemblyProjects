@@ -19,12 +19,13 @@ void updateFlagsADD(char result, char a, char b)
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 
     // when the inputs have opposite signs, and the output has a different sign from the first operand.
-
+    // *Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation*
     /* flagOverflow = ((!(a & MSB_MASK) & !((char)b & MSB_MASK) & (result & MSB_MASK)) || // +a + b = -c
                     ((a & MSB_MASK) & ((char)b & MSB_MASK) & !(result & MSB_MASK)))       // -a - b = +c
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
     */
 
+    // source: https://stackoverflow.com/a/55469349
     flagOverflow = (b > 0 && a > MAX - b) || (b < 0 && a < MIN - b);
 }
 
@@ -35,12 +36,13 @@ void updateFlagsSUB(char result, char a, char b)
     flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
 
     // when the inputs have opposite signs, and the output has a different sign from the first operand.
-
+    // *Doest work because of Undefined Behaviour in C, we need to catch the overflow before doing the operation*
     /* flagOverflow = ((!(a & MSB_MASK) & ((char)b & MSB_MASK) & (result & MSB_MASK)) || // +a - b = -c
                     ((a & MSB_MASK) & !(char)b & MSB_MASK & !(result & MSB_MASK)))       // -a + b = +c
                    >> 7;    // shift from msb to lsb to get only 0 or 1.
     */
 
+    // source: https://stackoverflow.com/a/70503136
     flagOverflow = (b > 0 && a < MIN + b) || (b < 0 && a > MAX + b);
 }
 

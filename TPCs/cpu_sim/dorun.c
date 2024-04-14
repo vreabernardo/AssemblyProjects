@@ -9,7 +9,7 @@ extern unsigned char flagOverflow;
 char old_ac;
 
 #define MAX +127
-#define MIN -128
+#define MIN -127
 #define MSB_MASK 0x80
 
 void updateFlagsADD(char result, char a, char b)

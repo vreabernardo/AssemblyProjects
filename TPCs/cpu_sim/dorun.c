@@ -43,11 +43,6 @@ void dorun()
         opALU = (unsigned char)((ir & 0x0F00) >> 8);
         addressOrValue = (char)(ir & 0x00FF);
 
-        /*
-        printf("PC: 0x%02x, IR: 0x%04x, opcode: 0x%02x, opALU: 0x%02x, addressOrValue: 0x%02x\n", pc, ir, opcode, opALU, addressOrValue);
-        printf("Accumulator: 0x%02x, Zero: %d, Carry: %d, Overflow: %d\n", ac, flagZero, flagCarry, flagOverflow);
-        */
-
         switch (opcode)
         {
         case 0x0F: // HALT

@@ -9,12 +9,12 @@ extern unsigned char flagOverflow;
 
 #define MAX +127
 #define MIN -128
-
+#define UNSIGNED_MAX 255
 void updateFlags(char result, char a, char b, char isAddition)
 {
     flagZero = (result == 0x00);
 
-    flagCarry = ((unsigned int)a + (unsigned int)b) > 0xFF;
+    flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;
 
     if (isAddition)
     {

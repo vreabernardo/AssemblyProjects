@@ -19,8 +19,9 @@ void updateFlags(char result, char a, char b, char isAddition)
     
     int MSB_a = 0;
     int MSB_res = 0;
-    //determines the most significant bit of result and old_ac;
-    //if MSB_res is diferent then there was a carry;
+    /* determines the position of the MSB of the result and of the old acumulator value;
+    the while loop breaks once there's a discrepacy between the two values;
+    */
     while (MSB_a != MSB_res) {
         if (result != 0) {
             result >>= 1;
@@ -33,6 +34,7 @@ void updateFlags(char result, char a, char b, char isAddition)
         }
     }
     
+    //even though the loop can break when the MSB shifts to the leff, the flag only triggers if the MSB is greater than the old value;
     flagCarry = MSB_res > MSB_a;
     
     //flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;

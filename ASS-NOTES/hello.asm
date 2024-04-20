@@ -1,3 +1,4 @@
+; x86 Assembly
 global _start
 
 section .text:

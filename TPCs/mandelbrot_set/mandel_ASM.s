@@ -6,10 +6,12 @@
 computePoint:
     movsd zero(%rip), %xmm0 # zi = 0.0
     movsd zero(%rip), %xmm1 # zr = 0.0
-    movq  zero(%rip), %rcx   # iterations = 0
-    movq $255, %rdx         # Load max_iterations into RDX
-    movsd four(%rip), %xmm5 # Load 4.0 into XMM5
+    movq  zero(%rip), %rcx  # iterations = 0
 
+    movq $4, %rdx           # load 4 into rdx   
+    cvtsi2sdq %rdx, %xmm5   # 4.0 to xmm5
+    
+    movq $255, %rdx         # Load max_iterations into RDX
 
     cycle:
         cmp %rdx, %rcx            
@@ -21,19 +23,12 @@ computePoint:
         movsd %xmm2, %xmm4   # zi3 = zi2
         addsd %xmm3, %xmm4   # zi3 = zi * zi + zr * zr
         ucomisd %xmm4, %xmm5 # compare (zi * zi + zr * zr) with 4.0
-        jge end              # break if zi * zi + zr * zr >= 4.0
-        
-        
-        
-        
-        
         inc %rcx            # i++     
         jmp cycle           # repeat cycle               
 
 end:
-    movq %rcx, %rax           
+    movq %rcx, %rax       # convert float to int
     retq                       
 
 
 zero: .double 0.0
-four: .double 4.0

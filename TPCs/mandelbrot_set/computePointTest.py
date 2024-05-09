@@ -8,6 +8,7 @@ def compute(nx, ny, xmin, ymin, xmax, ymax):
             x_value = xmin + delta_x * x
             v = compute_point(x_value, y_value)  
             print(v)
+        break
 
 # unsigned char computePoint( double x, double y)
 def compute_point(x, y):

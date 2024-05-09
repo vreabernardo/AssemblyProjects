@@ -32,8 +32,8 @@ void compute(unsigned char *buffer, int nx, int ny, double xmin, double ymin, do
       unsigned char v = computePoint(x_value, y_value);
       // updateImage(buffer, x, y, v, nx);
       printf("%d \n", v);
-      break;
     }
+    break;
   }
 }
 

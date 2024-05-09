@@ -3,38 +3,67 @@
 .section .note.GNU-stack,"",@progbits
 .text
 
-# rcx  255
-# rcx  i
-# xmm0 zi
-# xmm1 zr
+computePoint:
+    # load 0 to xmm14, xmm15, eax 
+    pxor	%xmm14, %xmm14
+    pxor	%xmm15, %xmm15
+    xor     %eax, %eax
+    pxor	%xmm12, %xmm12 
+    pxor	%xmm13, %xmm13      
 
-computePoint:                   # rdi x_value rsi y_value
-    movq $255, %rcx             # rcx = 255 max iterations
-    movq $0, %rax               # rcx = 0 current iteration
-    movsd zero(%rip), %xmm0     # xmm0 = 0.0
-    movsd zero(%rip), %xmm1     # xmm1 = 0.0    
+    # load x and y to xmm14 and xmm15
+    movsd	%xmm0, %xmm15   # xvalue = x
+	movsd	%xmm1, %xmm14   # yvalue = y
+	# load iterations to eax
+    movl	$0, %eax        # iteration = 0
+
+    # zi = 0
+	pxor	%xmm0, %xmm0    # xmm0 = 0
+	movsd	%xmm0, %xmm12   # zi = xmm0 = 0
+
+    # zr = 0
+	pxor	%xmm0, %xmm0    # xmm0 = 0
+	movsd	%xmm0, %xmm13   # zr = xmm0 = 0
     
-    computePoint_cycle:
-    cmpq %rax, %rcx
-    je computePoint_end         # if rax == rcx, jump to end aka i == 255
+    jmp while_signature 
 
+while_body:
+	movsd	%xmm13, %xmm0
+	movapd	%xmm0, %xmm1
+	mulsd	%xmm0, %xmm1
+	movsd	%xmm12, %xmm0
+	movapd	%xmm0, %xmm2
+	mulsd	%xmm0, %xmm2
+	subsd	%xmm2, %xmm1
+	movapd	%xmm1, %xmm0
+	movsd	%xmm15, %xmm1
+	addsd	%xmm1, %xmm0
+	movsd	%xmm0, %xmm3
+	movsd	%xmm13, %xmm0
+	addsd	%xmm0, %xmm0
+	mulsd	%xmm12, %xmm0
+	movsd	%xmm14, %xmm1
+	addsd	%xmm1, %xmm0
+	movsd	%xmm0, %xmm4
+	movsd	%xmm4, %xmm0
+	movsd	%xmm0, %xmm12
+	movsd	%xmm3, %xmm0
+	movsd	%xmm0, %xmm13
+	addl	$1, %eax
+while_signature: 
+    movsd	%xmm13, %xmm0		#  xmm0 = zr
+	movapd	%xmm0, %xmm1		#  xmm1 = zr
+	mulsd	%xmm0, %xmm1		#  xmm1 = zr * zr
+	movsd	%xmm12, %xmm0		#  xmm0 = zi
+	mulsd	%xmm0, %xmm0 		#  xmm0 = zi * zi
+	addsd	%xmm0, %xmm1		#  xmm1 = zr * zr + zi * zi
+	movsd	four(%rip), %xmm0 	#  xmm0 = 4.0
+	comisd	%xmm1, %xmm0		#  src: xmm1  dest:xmm0
+	jbe	end_while				#  break if xmm0(4) <= xmm1
+	cmpl	$254, %eax   	    #  src: 254  dest:iteration
+	jle	while_body				#  continue if iteration <= 254
 
-    movsd %xmm0, %xmm2          # xmm2 = zi
-    movsd %xmm1, %xmm3          # xmm3 = zr
-    mulsd %xmm2, %xmm2          # xmm2 = zi^2
-    mulsd %xmm3, %xmm3          # xmm3 = zr^2
-    addsd %xmm2, %xmm3          # xmm3 = zr^2 + zi^2
-    ucomisd four(%rip), %xmm3   # compare xmm3 to 4.0
-    jae computePoint_end        # if xmm3 >= 4.0, jump to end
-    
-
-    incq %rax
-    jmp computePoint_cycle
-
-computePoint_end:
+end_while:
     retq
 
-zero:
-    .double 0.0
-four:
-    .double 4.0
+four:.double 4.0

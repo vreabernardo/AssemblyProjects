@@ -4,31 +4,45 @@
 .text
 
 computePoint:
-    movsd zero(%rip), %xmm0 # zi = 0.0
-    movsd zero(%rip), %xmm1 # zr = 0.0
-    movq  zero(%rip), %rcx  # iterations = 0
-
-    movq $4, %rdx           # load 4 into rdx   
-    cvtsi2sdq %rdx, %xmm5   # 4.0 to xmm5
     
-    movq $255, %rdx         # Load max_iterations into RDX
-
+    movq $0, %rdx           # 0 into rdx  
+    cvtsi2sdq %rdx, %xmm0   # 0.0 to xmm0 (zi = (double)rdx = 0.0)
+    cvtsi2sdq %rdx, %xmm1   # 0.0 to xmm1 (zr = (double)rdx = 0.0)
+    movq %rdx, %rcx         # 0 to rcx    (i = rcx = rdx = 0)
+    
     cycle:
-        cmp %rdx, %rcx            
-        jge end              # break if i >= max_iterations(255)
+        # Load max_iterations into RDX
+        movq $255, %rdx      
+        cmpq %rdx, %rcx            
+        jae end              # break if i >= max_iterations (255)
+
+        # Copy zi and zr
         movsd %xmm0, %xmm2   # zi2 = zi
         movsd %xmm1, %xmm3   # zr2 = zr
-        mulsd %xmm0, %xmm2   # zi2 = zi * zi
-        mulsd %xmm1, %xmm3   # zr2 = zr * zr
-        movsd %xmm2, %xmm4   # zi3 = zi2
-        addsd %xmm3, %xmm4   # zi3 = zi * zi + zr * zr
-        ucomisd %xmm4, %xmm5 # compare (zi * zi + zr * zr) with 4.0
-        inc %rcx            # i++     
-        jmp cycle           # repeat cycle               
+
+        # Calculate zi2 = zi^2, zr2 = zr^2
+        mulsd %xmm2, %xmm2   # zi2 = zi * zi
+        mulsd %xmm3, %xmm3   # zr2 = zr * zr
+
+        # Calculate zi^2 + zr^2
+        addsd %xmm2, %xmm4   # zi^2 + zr^2
+        addsd %xmm3, %xmm4   # zi^2 + zr^2 = zi^2 + zr^2
+
+        # Load 4.0 into xmm5, since this is a constant, do this outside the loop ideally
+        movq $4, %rdx          
+        cvtsi2sdq %rdx, %xmm5   # 4.0 to xmm5
+
+        # Compare (zi * zi + zr * zr) with 4.0
+        ucomisd %xmm5, %xmm4 
+        jae end                # break if zi * zi + zr * zr >= 4.0
+
+        # Increment loop counter
+        incq %rcx            
+        jmp cycle             # repeat loop
+           
 
 end:
-    movq %rcx, %rax       # convert float to int
+    #cvtsd2si %xmm4, %rax   # convert zi to int
+    #cvtsd2si %xmm5, %rax   # convert zi to int
+    movq %rcx, %rax         
     retq                       
-
-
-zero: .double 0.0

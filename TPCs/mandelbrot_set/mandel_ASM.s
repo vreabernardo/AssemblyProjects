@@ -18,6 +18,16 @@ computePoint:
     cmpq %rax, %rdi
     je end     # if rax == rdi, jump to end aka i == 255
 
+
+    movsd %xmm0, %xmm2 # xmm2 = zi
+    movsd %xmm1, %xmm3 # xmm3 = zr
+    mulsd %xmm2, %xmm2 # xmm2 = zi^2
+    mulsd %xmm3, %xmm3 # xmm3 = zr^2
+    addsd %xmm2, %xmm3 # xmm3 = zr^2 + zi^2
+    ucomisd four(%rip), %xmm3 # compare xmm3 to 4.0
+    jae end # if xmm3 >= 4.0, jump to end
+    
+
     incq %rax
     jmp cycle
 

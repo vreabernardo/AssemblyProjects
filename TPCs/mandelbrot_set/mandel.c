@@ -29,7 +29,7 @@ void compute(unsigned char *buffer, int nx, int ny, double xmin, double ymin, do
     for (x = 0; x < nx; x++)
     {
       double x_value = xmin + delta_x * x;
-      unsigned char v = computePoint(x_value, y_value);
+      unsigned char v = computePoint(0, 0);
       // updateImage(buffer, x, y, v, nx);
       printf("%d \n", v);
       break;

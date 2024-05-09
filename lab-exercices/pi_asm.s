@@ -8,6 +8,7 @@ sumPi:         #rdi ni
     movsd one(%rip), %xmm2
     divsd %xmm1, %xmm2
     movq $1, %rcx
+    
     cycle:
     cmpq %rcx, %rdi
     jb end
@@ -21,6 +22,7 @@ sumPi:         #rdi ni
     addsd %xmm4, %xmm0
     incq %rcx
     jmp cycle
+
 end:
     retq
 

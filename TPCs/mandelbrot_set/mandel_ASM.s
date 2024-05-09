@@ -27,6 +27,7 @@ computePoint:
     
     jmp while_signature 
 
+# TODO: comment this rotine
 while_body:
 	movsd	%xmm13, %xmm0
 	movapd	%xmm0, %xmm1

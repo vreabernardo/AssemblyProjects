@@ -30,10 +30,8 @@ void compute(unsigned char *buffer, int nx, int ny, double xmin, double ymin, do
     {
       double x_value = xmin + delta_x * x;
       unsigned char v = computePoint(x_value, y_value);
-      // updateImage(buffer, x, y, v, nx);
-      printf("%d \n", v);
+      updateImage(buffer, x, y, v, nx);
     }
-    break;
   }
 }
 
@@ -83,18 +81,18 @@ int main(int argc, char **argv)
   float xmax = (float)atof(argv[5]);
   float ymax = (float)atof(argv[6]);
   */
-  // printf("--- Mandelbrot --- \nThe generated image will be %d x %d.\n", nx, ny);
+  printf("--- Mandelbrot --- \nThe generated image will be %d x %d.\n", nx, ny);
 
-  // printf("Starting Mandelbrot Computation!\n");
+  printf("Starting Mandelbrot Computation!\n");
   buffer = (unsigned char *)calloc(nx * ny, sizeof(unsigned char));
   compute(buffer, nx, ny, -1, -1, 1, 1);
-  // gettimeofday(&t, NULL);
-  //("Mandelbrot Computation Complete! Elapsed time (ms) = %ld\n", (t.tv_sec - s.tv_sec) * 1000 + (t.tv_usec - s.tv_usec) / 1000);
-  // printf("Writing image...\n");
-  // output_ppm(IMAGE_FILENAME, COLORMAP, buffer, nx, ny, NUM_COLORS);
-  // gettimeofday(&t, NULL);
-  // printf("Full execution time (ms) = %ld\n", (t.tv_sec - s.tv_sec) * 1000 + (t.tv_usec - s.tv_usec) / 1000);
-  // printf("The end!\n");
+  gettimeofday(&t, NULL);
+  printf("Mandelbrot Computation Complete! Elapsed time (ms) = %ld\n", (t.tv_sec - s.tv_sec) * 1000 + (t.tv_usec - s.tv_usec) / 1000);
+  printf("Writing image...\n");
+  output_ppm(IMAGE_FILENAME, COLORMAP, buffer, nx, ny, NUM_COLORS);
+  gettimeofday(&t, NULL);
+  printf("Full execution time (ms) = %ld\n", (t.tv_sec - s.tv_sec) * 1000 + (t.tv_usec - s.tv_usec) / 1000);
+  printf("The end!\n");
   free(buffer);
   return (EXIT_SUCCESS);
 }

@@ -1,7 +1,22 @@
-.globl computePoint # unsigned char computePoint(double x, double y)
+.globl updateImage  #  void updateImage( buffer, x,     y,  val, base)
+.globl computePoint #  unsigned char computePoint( double x, double y)
 
 .section .note.GNU-stack,"",@progbits
 .text
+
+
+# Arguments:
+# %rdi = buffer (base address)
+# %rsi = x
+# %edx = y
+# %cl = v (0-255)
+# %r8 = base (width of the buffer)
+
+updateImage:
+    imull	%edx, %r8d       # r8 = y * base
+	leal	(%r8,%rsi), %eax # eax = y * base + x
+	movb	%cl, (%rdi,%rax) # buffer[y * base + x] = v
+	retq
 
 computePoint:
     # load 0 to xmm14, xmm15, eax 
@@ -51,6 +66,7 @@ while_body:
 	movsd	%xmm3, %xmm0
 	movsd	%xmm0, %xmm13
 	addl	$1, %eax
+
 while_signature: 
     movsd	%xmm13, %xmm0		#  xmm0 = zr
 	movapd	%xmm0, %xmm1		#  xmm1 = zr
@@ -68,3 +84,6 @@ end_while:
     retq
 
 four:.double 4.0
+
+
+                                    

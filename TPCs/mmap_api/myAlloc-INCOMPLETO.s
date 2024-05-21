@@ -90,3 +90,12 @@ deallocate:
     subq    $HEADER_SIZE, %rax  # Move to the header
     movq    $AVAILABLE, (%rax)  # Mark the block as available
     retq                        # Return
+
+# void deallocate(void *address)
+# {
+#   // Get the block structure address
+#   block *blk = (block *)address - 1;
+#
+#   // Mark the block as available
+#   blk->available = 1;
+# }

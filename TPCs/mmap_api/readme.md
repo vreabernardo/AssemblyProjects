@@ -1,3 +1,7 @@
+### TODO:
+- [ ] allocate
+- [x] deallocate
+
 ## allocate(heap *h, unsigned long long int bytesToAllocate)
 
 This function returns the address of a block with a size greater than or equal to `bytesToAllocate`. 

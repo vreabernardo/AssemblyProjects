@@ -17,7 +17,8 @@ The loop terminates when one of the following conditions is met:
     If it's not possible to create the new block because it would exceed the `h->limit` address, the function should do nothing and return -1.
 
 ``` c
-#define block_size sizeof(block)
+#define BLOCK_SIZE 16
+
 void *allocate(heap *h, unsigned long long int bytesToAllocate)
 {
   // Initialize a pointer to iterate through the blocks
@@ -27,42 +28,31 @@ void *allocate(heap *h, unsigned long long int bytesToAllocate)
   while ((void *)currentBlock < h->top)
   {
     // Check if the block is available and has sufficient size
-    if (currentBlock->available == 1 && currentBlock->size >= bytesToAllocate)
+    if (currentBlock->available && currentBlock->size >= bytesToAllocate)
     {
       // Mark the block as unavailable
       currentBlock->available = 0;
       // Return the address of the block + sizeof(block)
-      return (void *)currentBlock + block_size;
+      return (void *)currentBlock + BLOCK_SIZE;
     }
     // Move to the next block
-    currentBlock = (block *)((void *)currentBlock + block_size + currentBlock->size); // skips the orange part of the block (alocated space) and his struct (fig 4)
+    currentBlock = (block *)((void *)currentBlock + BLOCK_SIZE + currentBlock->size);
   }
 
-  // If it reached the top, try to create a new block
-  if ((void *)currentBlock >= h->top)
+  // If reached the top, try to create a new block
+  unsigned long long int blockSize = bytesToAllocate + BLOCK_SIZE;
+  if ((void *)currentBlock + blockSize <= h->limit)
   {
-    // Calculate the required size for the new block
-    unsigned long long int blockSize = bytesToAllocate + block_size;
-    // Check if there is enough space for the new block
-    if ((void *)currentBlock + blockSize <= h->limit)
-    {
-      // Mark the new block as available
-      block *newBlock = (block *)currentBlock;
-      newBlock->available = 0;
-      newBlock->size = bytesToAllocate;
-      // Update the top of the heap
-      h->top = (void *)currentBlock + blockSize;
-      // Return the address of the new block + sizeof(block)
-      return (void *)newBlock + block_size;
-    }
-    else
-    {
-      // There is not enough space for the new block
-      return 0;
-    }
+    // Create and initialize the new block
+    currentBlock->available = 0;
+    currentBlock->size = bytesToAllocate;
+    // Update the top of the heap
+    h->top = (void *)currentBlock + blockSize;
+    // Return the address of the new block + sizeof(block)
+    return (void *)currentBlock + BLOCK_SIZE;
   }
 
-  // Did not find a suitable block and did not reach the top
+  // Not enough space for a new block
   return 0;
 }
 ``` 

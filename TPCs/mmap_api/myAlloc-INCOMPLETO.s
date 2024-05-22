@@ -18,7 +18,7 @@
 
 # *p = rdi
 deallocate:
-    subq    $HEADER_SIZE, %rdi  # Move to the header
+    subq    $HEADER_SIZE, %rdi  # Move to the available flag in the header
     movq    $AVAILABLE, (%rdi)  # Mark the block as available
     retq                        # Return
 

@@ -1,5 +1,5 @@
 ### TODO:
-- [ ] allocate
+- [x] allocate
 - [x] deallocate
 
 ## allocate(heap *h, unsigned long long int bytesToAllocate)

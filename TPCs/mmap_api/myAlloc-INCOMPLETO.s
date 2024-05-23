@@ -11,7 +11,7 @@
 .equ HEAP_TOP_OFFSET, 8         # Location of the heap top address field in the heap descriptor
 .equ HEAP_LIMIT, 16             # Location of end address in the heap descriptor
 
-.equ NULL, -1
+.equ NULL, 0
 
 .section .note.GNU-stack, "", @progbits
 .text

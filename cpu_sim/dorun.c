@@ -17,27 +17,10 @@ void updateFlags(char result, char a, char b, char isAddition)
     flagZero = (result == 0x00);
 
     
-    int MSB_a = 0;
-    int MSB_res = 0;
-    /* determines the position of the MSB of the result and of the old acumulator value;
-    the while loop breaks once there's a discrepacy between the two values;
-    */
-    while (MSB_a != MSB_res) {
-        if (result != 0) {
-            result >>= 1;
-            MSB_res ++;
-        }
-
-        if(a != 0) {
-            a >>= 1;
-            MSB_a ++;
-        }
-    }
-    
     //even though the loop can break when the MSB shifts to the leff, the flag only triggers if the MSB is greater than the old value;
     flagCarry = MSB_res > MSB_a;
     
-    //flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;
+    flagCarry = ((unsigned int)a + (unsigned int)b) > UNSIGNED_MAX;
 
     if (isAddition)
     {

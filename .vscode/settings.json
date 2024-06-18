@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "stdio.h": "c",
-        "assert.h": "c",
-        "types.h": "c",
-        "myalloc.h": "c"
-    }
-}
